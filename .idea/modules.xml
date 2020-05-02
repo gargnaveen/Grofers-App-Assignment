@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/grofersapp-stub/grofers/grofers.iml" filepath="$PROJECT_DIR$/grofersapp-stub/grofers/grofers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grofersapp-stub/grofers/grofers-api/grofers-api.iml" filepath="$PROJECT_DIR$/grofersapp-stub/grofers/grofers-api/grofers-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grofersapp-stub/grofers/grofers-db/grofers-db.iml" filepath="$PROJECT_DIR$/grofersapp-stub/grofers/grofers-db/grofers-db.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grofersapp-stub/grofers/grofers-service/grofers-service.iml" filepath="$PROJECT_DIR$/grofersapp-stub/grofers/grofers-service/grofers-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/grofersapp-stub.iml" filepath="$PROJECT_DIR$/.idea/grofersapp-stub.iml" />
+    </modules>
+  </component>
+</project>
