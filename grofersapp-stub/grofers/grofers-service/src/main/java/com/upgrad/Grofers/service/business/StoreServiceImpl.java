@@ -25,7 +25,9 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public StoreEntity StoreByUUID(String StoreId) throws StoreNotFoundException {
-        return StoreDao.storeByUUID(StoreId);
+        StoreEntity storeEntity = StoreDao.storeByUUID(StoreId);
+        storeEntity.setCategories(categoryDao.getAllCategoriesOrderedByName());
+        return storeEntity;
     }
 
     /**
@@ -33,10 +35,12 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public List<StoreEntity> StoresByName(String StoreName) throws StoreNotFoundException {
-    if(StoreDao.storeByName(StoreEntity.storeName()==null))
-    {
-        throw new StoreNotFoundException("RNF-003","Store name file should not be empty");
-    }
+        List<StoreEntity> storeEntityList = StoreDao.storeByName(StoreName);
+        for(StoreEntity storeEntity : storeEntityList)
+        {
+            storeEntity.setCategories(categoryDao.getAllCategoriesOrderedByName());
+        }
+        return storeEntityList;
     }
 
     /**
@@ -44,6 +48,12 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public List<StoreEntity> StoresByRating() {
+        List<StoreEntity> storeEntityList =  StoreDao.storeByRating();
+        for(StoreEntity storeEntity : storeEntityList)
+        {
+            storeEntity.setCategories(categoryDao.getAllCategoriesOrderedByName());
+        }
+        return storeEntityList;
     }
 
     /**
@@ -51,6 +61,13 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public List<StoreEntity> StoreByCategory(String categoryId) throws CategoryNotFoundException {
+
+        List<StoreEntity> storeEntityList = StoreDao.storeByCategory(categoryId);
+        for(StoreEntity storeEntity : storeEntityList)
+        {
+            storeEntity.setCategories(categoryDao.getAllCategoriesOrderedByName());
+        }
+        return storeEntityList;
     }
 
 }

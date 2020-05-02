@@ -10,7 +10,6 @@ import com.upgrad.Grofers.service.entity.ItemEntity;
 import com.upgrad.Grofers.service.entity.StoreEntity;
 import com.upgrad.Grofers.service.exception.CategoryNotFoundException;
 import com.upgrad.Grofers.service.exception.StoreNotFoundException;
-import org.apache.catalina.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -92,6 +91,13 @@ import java.util.UUID;
 	 */
 	@RequestMapping(method = RequestMethod.GET, path = "name/{Store_name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<StoreListResponse> getStoreByName(@PathVariable("Store_name") String StoreName) throws StoreNotFoundException {
+
+		if(StoreName==null)
+			throw new StoreNotFoundException("RNF-001","Store name feild should not be empty");
+
+		List<StoreEntity> storeEntityList = StoreService.StoresByName(StoreName);
+		StoreListResponse storeListResponse = getStoreListResponse(storeEntityList);
+		return new ResponseEntity<StoreListResponse>(storeListResponse,HttpStatus.OK);
 	}
 
 	/**
@@ -103,6 +109,13 @@ import java.util.UUID;
 	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<StoreListResponse> getStoreByCategory(@PathVariable("category_id") String categoryId) throws CategoryNotFoundException {
+		if(categoryId==null)
+			throw new CategoryNotFoundException("CNF-001","Category ID feild should not be empty!");
+
+		CategoryEntity categoryEntity = categoryService.getCategoryById(categoryId);
+		List<StoreEntity> storeEntityList = StoreService.StoreByCategory(categoryId);
+		StoreListResponse storeListResponse = getStoreListResponse(storeEntityList);
+		return new ResponseEntity<StoreListResponse>(storeListResponse,HttpStatus.OK);
 	}
 
 	/**
@@ -112,6 +125,9 @@ import java.util.UUID;
 	 */
 	@RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<StoreListResponse> getAllStore() {
+		List<StoreEntity> storeEntityList = StoreService.StoresByRating();
+		StoreListResponse storeListResponse = getStoreListResponse(storeEntityList);
+		return new ResponseEntity<StoreListResponse>(storeListResponse,HttpStatus.OK);
 	}
 
 

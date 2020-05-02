@@ -19,6 +19,10 @@ public class CategoryServiceImpl implements CategoryService{
      */
     @Override
     public CategoryEntity getCategoryById(String categoryId) throws CategoryNotFoundException {
+        CategoryEntity categoryEntity= categoryDao.getCategoryById(categoryId);
+        if(categoryEntity==null)
+            throw new CategoryNotFoundException("CNF-002","No category By this id");
+        return categoryEntity;
     }
 
     /**
@@ -26,6 +30,8 @@ public class CategoryServiceImpl implements CategoryService{
      */
     @Override
     public List<CategoryEntity> getAllCategoriesOrderedByName()  {
+        List<CategoryEntity> categoryEntityList = categoryDao.getAllCategoriesOrderedByName();
+        return categoryEntityList;
     }
 
     /**
@@ -34,6 +40,5 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public List<CategoryEntity> getCategoriesByStores(String storeId)  {
         return categoryDao.getCategoriesByStores(storeId);
-
     }
 }
