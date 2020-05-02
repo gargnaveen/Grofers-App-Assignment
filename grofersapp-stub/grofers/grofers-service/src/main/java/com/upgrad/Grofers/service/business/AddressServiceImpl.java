@@ -43,6 +43,18 @@ public class AddressServiceImpl implements AddressService {
 	 * The method implements the business logic for get address by uuid endpoint.
 	 */
 	@Override public AddressEntity getAddressByUUID(String addressId, CustomerEntity customerEntity) throws AuthorizationFailedException, AddressNotFoundException {
+		AddressEntity addressEntity = addressDao.getAddressByUUID(addressId);
+
+		if(addressEntity==null)
+			throw new AddressNotFoundException("ANF-003","No address by this id!");
+
+		CustomerAddressEntity customerAddressEntity = addressDao.getCustomerByAddress(addressId);
+		if(!customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid()))
+		{
+			throw new AuthorizationFailedException("ATHR-004","You are not authorized to view/update/delete any one else's address");
+		}
+
+		return addressEntity;
 	}
 
 
@@ -50,13 +62,14 @@ public class AddressServiceImpl implements AddressService {
 	 * The method implements the business logic for saving customer address.
 	 */
 	@Transactional(propagation = Propagation.REQUIRED) public CustomerAddressEntity saveCustomerAddress(CustomerAddressEntity customerAddressEntity) {
-		addressDao.saveCustomerAddress(customerAddressEntity);
+		return addressDao.saveCustomerAddress(customerAddressEntity);
 	}
 
 	/**
 	 * The method implements the business logic for delete address endpoint.
 	 */
 	@Override @Transactional(propagation = Propagation.REQUIRED) public AddressEntity deleteAddress(AddressEntity addressEntity) {
+		return addressDao.deleteAddress(addressEntity);
 	}
 
 	/**

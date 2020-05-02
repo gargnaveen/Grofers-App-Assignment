@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AddressController {
 
@@ -75,11 +76,13 @@ public class AddressController {
     public ResponseEntity<DeleteAddressResponse> deleteAddresses(@RequestHeader("authorization") String authorization, @RequestParam("addressId") String addressId) throws AddressNotFoundException, AuthorizationFailedException
     {
         customerService.authorization(authorization);
+        if(addressId==null)
+            throw new AddressNotFoundException("ANF-005","AddressId cannot be empty!");
+
         CustomerEntity customerEntity = customerService.getCustomer(authorization);
         AddressEntity addressEntity = addressService.getAddressByUUID(addressId,customerEntity);
         AddressEntity addressEntityDeleted = addressService.deleteAddress(addressEntity);
-        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse().id(addressEntityDeleted.getUuid()).status("Address Deleted Successfully!");
-
+        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse().id(UUID.fromString(addressEntityDeleted.getUuid())).status("Address Deleted Successfully!");
         return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
     }
 
@@ -93,19 +96,21 @@ public class AddressController {
      * @throws AuthorizationFailedException
      */
     @GetMapping("/address/customer")
-    public ResponseEntity<AddressListResponse> getAddresses(@RequestHeader("authorization") String authorization) throws AuthorizationFailedException { {
-        customerService.authorization(authorization);
-        CustomerEntity customerEntity = customerService.getCustomer(authorization);
-        List<AddressEntity> addressEntityList = addressService.getAllAddress(customerEntity);
+    public ResponseEntity<AddressListResponse> getAddresses(@RequestHeader("authorization") String authorization) throws AuthorizationFailedException {
+        {
+            customerService.authorization(authorization);
+            CustomerEntity customerEntity = customerService.getCustomer(authorization);
+            List<AddressEntity> addressEntityList = addressService.getAllAddress(customerEntity);
 
-        AddressList addressList = new AddressList();
-        List<AddressList> addressListList = null;
+            AddressList addressList = new AddressList();
+            List<AddressList> addressListList = null;
 
-        AddressListResponse addressListResponse = new AddressListResponse();
-        addressListResponse.setAddresses(addressListList);
+            AddressListResponse addressListResponse = new AddressListResponse();
+            addressListResponse.setAddresses(addressListList);
 
-        return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
+            return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
+        }
+
+
     }
-
-
 }
