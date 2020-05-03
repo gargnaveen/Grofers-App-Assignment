@@ -55,7 +55,6 @@ public class AddressController {
         CustomerAddressEntity customerAddressEntity = new CustomerAddressEntity();
         customerAddressEntity.setAddress(addressEntity);
         customerAddressEntity.setCustomer(customerEntity);
-        customerAddressEntity.setId(customerEntity.getId());
         addressService.saveAddress(addressEntity,customerAddressEntity);
 
         SaveAddressResponse saveAddressResponse = new SaveAddressResponse().id(addressEntity.getUuid()).status("Address successfully registered.");
@@ -97,7 +96,7 @@ public class AddressController {
      * @return - ResponseEntity<AddressListResponse> type object along with Http status OK.
      * @throws AuthorizationFailedException
      */
-    @GetMapping("/address/customer")
+    @GetMapping("/customer")
     public ResponseEntity<AddressListResponse> getAddresses(@RequestHeader("authorization") String authorization) throws AuthorizationFailedException {
         {
             customerService.authorization(authorization);
