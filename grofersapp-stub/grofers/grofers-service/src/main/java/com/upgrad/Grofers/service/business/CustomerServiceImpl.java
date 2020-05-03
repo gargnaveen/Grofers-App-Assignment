@@ -55,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new SignUpRestrictedException("SGR-003","Invalid contact number!");
         }
 
-        String passwordRegrex = "(?=.*[A-Z])(?=.*\\d)(?=.*[#@$%&*!^]).{8}";
+        String passwordRegrex = "^(?=.*\\d)(?=.*[A-Z]).{8,255}$";
         if(!customerEntity.getPassword().matches(passwordRegrex))
         {
             throw new SignUpRestrictedException("SGR-004","Weak password!");
@@ -83,6 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(encryptedPassword.equals(customerEntity.getPassword())){
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
             CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
+            customerAuthEntity.setUuid(customerEntity.getUuid());
             customerAuthEntity.setCustomer(customerEntity);
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
@@ -106,7 +107,6 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity logout(String access_token) throws AuthorizationFailedException {
-
         CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByAccesstoken(access_token);
         authorization(access_token);
         customerAuthEntity.setLogoutAt(ZonedDateTime.now());
@@ -121,13 +121,13 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerEntity updateCustomerPassword(String oldPassword,String newPassword, CustomerEntity customerEntity) throws UpdateCustomerException {
         final String encryptedOldPassword = PasswordCryptographyProvider.encrypt(oldPassword, customerEntity.getSalt());
 
-        String passwordRegrex = "(?=.*[A-Z])(?=.*\\d)(?=.*[#@$%&*!^]).{8}";
+        String passwordRegrex = "^(?=.*\\d)(?=.*[A-Z]).{8,255}$";
         if(!newPassword.matches(passwordRegrex))
         {
             throw new UpdateCustomerException("UCR-001","Weak password!");
         }
 
-        if(!customerEntity.getPassword().equals(oldPassword))
+        if(!customerEntity.getPassword().equals(encryptedOldPassword))
         {
             throw new UpdateCustomerException("UCR-004","Incorrect old password!");
         }
@@ -149,6 +149,7 @@ public class CustomerServiceImpl implements CustomerService {
     public void authorization(String access_token) throws AuthorizationFailedException {
 
         CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByAccesstoken(access_token);
+
 
         if(customerAuthEntity==null)
             throw new AuthorizationFailedException("ATHR-001","Customer is not logged in!");

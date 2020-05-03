@@ -1,7 +1,7 @@
 
 server:
   servlet:
-    port: 8080
+    port: 9000
     contextPath: /api
 
 spring:
@@ -11,7 +11,7 @@ spring:
 
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/grofersdb
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
 

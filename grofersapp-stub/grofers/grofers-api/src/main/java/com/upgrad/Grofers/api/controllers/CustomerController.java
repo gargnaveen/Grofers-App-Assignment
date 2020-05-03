@@ -60,7 +60,9 @@ public class CustomerController {
 		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
 
-		LoginResponse loginResponse = new LoginResponse().id(customerEntity.getUuid()).message("LoggedIn Successful!");
+		LoginResponse loginResponse=new LoginResponse().id(customerEntity.getUuid())
+				.emailAddress(customerEntity.getEmail()).firstName(customerEntity.getFirstName())
+				.lastName(customerEntity.getLastName()).contactNumber(customerEntity.getContactNumber()).message("LOGGED IN SUCCESSFULLY");
 		HttpHeaders header = new HttpHeaders();
 		header.add("access-token", customerAuthEntity.getAccessToken());
 		return new ResponseEntity<LoginResponse>(loginResponse, header, HttpStatus.OK);
@@ -76,9 +78,7 @@ public class CustomerController {
 	@PostMapping("/customer/logout")
 	public ResponseEntity<LogoutResponse> customerLogout(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 		CustomerAuthEntity customerAuthEntity = customerService.logout(authorization);
-
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
-
 		LogoutResponse logoutResponse = new LogoutResponse().id(customerEntity.getUuid()).message("Logged Out Successfully!");
 		return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
 	}
