@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,11 +103,22 @@ public class AddressController {
             customerService.authorization(authorization);
             CustomerEntity customerEntity = customerService.getCustomer(authorization);
             List<AddressEntity> addressEntityList = addressService.getAllAddress(customerEntity);
-
-            AddressList addressList = new AddressList();
-            List<AddressList> addressListList = null;
-
+            List<AddressList> addressListList = new ArrayList<>();
             AddressListResponse addressListResponse = new AddressListResponse();
+            addressEntityList.forEach(addressEntity -> {
+                System.out.println(addressEntity.toString());
+                AddressList addressList = new AddressList();
+                addressList.setCity(addressEntity.getCity());
+                addressList.setFlatBuildingName(addressEntity.getFlatBuilNo());
+                addressList.setLocality(addressEntity.getLocality());
+                addressList.setPincode(addressEntity.getPincode());
+                AddressListState addressListState = new AddressListState();
+                addressListState.setId(UUID.fromString(addressEntity.getState().getUuid()));
+                addressListState.setStateName(addressEntity.getState().getStateName());
+                addressList.setState(addressListState);
+                addressListList.add(addressList);
+
+            });
             addressListResponse.setAddresses(addressListList);
 
             return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
