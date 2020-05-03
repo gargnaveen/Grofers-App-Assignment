@@ -33,7 +33,7 @@ public class CustomerController {
 	 * @throws SignUpRestrictedException
 	 */
 
-	@PostMapping("/customer/signup")
+	@PostMapping("/signup")
 	public ResponseEntity<SignupCustomerResponse> signup(@RequestBody SignupCustomerRequest signupCustomerRequest) throws SignUpRestrictedException {
 		CustomerEntity customerEntity = null;
 		customerEntity = customerService.saveCustomer(new CustomerEntity(UUID.randomUUID().toString(), signupCustomerRequest.getFirstName(), signupCustomerRequest.getLastName(), signupCustomerRequest.getEmailAddress(), signupCustomerRequest.getContactNumber(), signupCustomerRequest.getPassword()));
@@ -51,7 +51,7 @@ public class CustomerController {
 	 * @return - ResponseEntity<LoginResponse> type object along with Http status OK.
 	 * @throws AuthenticationFailedException
 	 */
-	@PostMapping("/customer/login")
+	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 		byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
 		String decodedText = new String(decode);
@@ -75,7 +75,7 @@ public class CustomerController {
 	 * @return - ResponseEntity<LogoutResponse> type object along with Http status OK.
 	 * @throws AuthorizationFailedException
 	 */
-	@PostMapping("/customer/logout")
+	@PostMapping("/logout")
 	public ResponseEntity<LogoutResponse> customerLogout(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 		CustomerAuthEntity customerAuthEntity = customerService.logout(authorization);
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
@@ -92,7 +92,7 @@ public class CustomerController {
 	 * @throws AuthorizationFailedException
 	 * @throws UpdateCustomerException
 	 */
-	@PutMapping("/customer/Password")
+	@PutMapping("/Password")
 	public ResponseEntity<LogoutResponse> updatePassword(@RequestHeader("authorization") String authorization, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws AuthorizationFailedException, UpdateCustomerException {
 
 		if(updatePasswordRequest.getNewPassword()==null||updatePasswordRequest.getOldPassword()==null)

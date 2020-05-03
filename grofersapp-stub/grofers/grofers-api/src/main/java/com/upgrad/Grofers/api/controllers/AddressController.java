@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@RestController
+@RequestMapping("address")
 public class AddressController {
 
     @Autowired
@@ -36,7 +38,7 @@ public class AddressController {
      * @throws AddressNotFoundException
      */
 
-    @PostMapping("/address")
+    @PostMapping("/")
    public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") String authorization,@RequestBody SaveAddressRequest saveAddressRequest) throws AuthorizationFailedException, SaveAddressException, AddressNotFoundException {
 
         customerService.authorization(authorization);
@@ -72,7 +74,7 @@ public class AddressController {
      * @throws AuthorizationFailedException
      * @throws AddressNotFoundException
      */
-    @DeleteMapping("/address/{address_id}")
+    @DeleteMapping("/{address_id}")
     public ResponseEntity<DeleteAddressResponse> deleteAddresses(@RequestHeader("authorization") String authorization, @RequestParam("addressId") String addressId) throws AddressNotFoundException, AuthorizationFailedException
     {
         customerService.authorization(authorization);
