@@ -75,7 +75,8 @@ public class AddressController {
      * @throws AddressNotFoundException
      */
     @DeleteMapping("/{address_id}")
-    public ResponseEntity<DeleteAddressResponse> deleteAddresses(@RequestHeader("authorization") String authorization, @RequestParam("addressId") String addressId) throws AddressNotFoundException, AuthorizationFailedException
+    public ResponseEntity<DeleteAddressResponse> deleteAddresses(@RequestHeader("authorization") String authorization
+            , @PathVariable("address_id") String addressId) throws AddressNotFoundException, AuthorizationFailedException
     {
         customerService.authorization(authorization);
         if(addressId==null)
