@@ -69,7 +69,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     public CustomerAuthEntity getCustomerAuthByUUID(String uuid){
         try {
-            return entityManager.createNamedQuery("CustomerAuthByUUID", CustomerAuthEntity.class).setParameter("uuid", uuid).getSingleResult();
+            return entityManager.createNamedQuery("customerByuuid", CustomerAuthEntity.class).setParameter("uuid", uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

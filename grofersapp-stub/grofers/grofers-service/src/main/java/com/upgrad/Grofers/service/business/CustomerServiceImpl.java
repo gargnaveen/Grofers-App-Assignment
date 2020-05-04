@@ -83,18 +83,27 @@ public class CustomerServiceImpl implements CustomerService {
         System.out.println(encryptedPassword);
         if(encryptedPassword.equals(customerEntity.getPassword())){
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-            CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
-            customerAuthEntity.setUuid(customerEntity.getUuid());
-            customerAuthEntity.setCustomer(customerEntity);
+            CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByUUID(customerEntity.getUuid());
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
-            customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerAuthEntity.getUuid(), now, expiresAt));
-            customerAuthEntity.setLoginAt(now);
-            customerAuthEntity.setExpiresAt(expiresAt);
-            customerAuthEntity.setUuid(customerAuthEntity.getUuid());
+            if(customerEntity == null) {
+                customerAuthEntity = new CustomerAuthEntity();
+                customerAuthEntity.setUuid(customerEntity.getUuid());
+                customerAuthEntity.setCustomer(customerEntity);
+                customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerAuthEntity.getUuid(), now, expiresAt));
+                customerAuthEntity.setLoginAt(now);
+                customerAuthEntity.setExpiresAt(expiresAt);
+                customerAuthEntity.setUuid(customerAuthEntity.getUuid());
 
-            customerDao.createCustomerAuth(customerAuthEntity);
-
+                customerDao.createCustomerAuth(customerAuthEntity);
+            } else{
+                customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerAuthEntity.getUuid(), now, expiresAt));
+                customerAuthEntity.setLoginAt(now);
+                if(customerAuthEntity.getExpiresAt().isBefore(now)) {
+                    customerAuthEntity.setExpiresAt(expiresAt);
+                }
+                customerDao.updateCustomerAuth(customerAuthEntity);
+            }
             return customerAuthEntity;
         }
         else{
