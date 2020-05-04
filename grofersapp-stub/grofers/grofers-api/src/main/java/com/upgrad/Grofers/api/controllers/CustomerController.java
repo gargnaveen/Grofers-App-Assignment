@@ -57,6 +57,8 @@ public class CustomerController {
 		String decodedText = new String(decode);
 		String[] decodedArray = decodedText.split(":");
 
+		System.out.println(decodedArray[1]);
+
 		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
 

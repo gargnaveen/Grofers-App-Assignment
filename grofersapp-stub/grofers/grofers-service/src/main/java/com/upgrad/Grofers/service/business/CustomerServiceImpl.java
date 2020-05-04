@@ -80,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new AuthenticationFailedException("ATH-001","This contact number has not been registered!");
 
         final String encryptedPassword = passwordCryptographyProvider.encrypt(password, customerEntity.getSalt());
+        System.out.println(encryptedPassword);
         if(encryptedPassword.equals(customerEntity.getPassword())){
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
             CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();

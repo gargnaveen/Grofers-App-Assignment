@@ -2,13 +2,10 @@ package com.upgrad.Grofers.service.entity;
 
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * StoreEntity class contains all the attributes to be mapped to all the fields in Stores table in the database.
@@ -47,11 +44,11 @@ public class StoreEntity implements Serializable {
 	private AddressEntity address;
 
 	@OneToMany
-	@JoinTable(name = "store_item", joinColumns = @JoinColumn(name = "store_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
+	@JoinTable(name = "stores_item", joinColumns = @JoinColumn(name = "store_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
 	private List<ItemEntity> items = new ArrayList<>();
 
 	@ManyToMany
-	@JoinTable(name = "store_category", joinColumns = @JoinColumn(name = "store_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+	@JoinTable(name = "stores_category", joinColumns = @JoinColumn(name = "store_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<CategoryEntity> categories = new ArrayList<>();
 
 	public StoreEntity() {
