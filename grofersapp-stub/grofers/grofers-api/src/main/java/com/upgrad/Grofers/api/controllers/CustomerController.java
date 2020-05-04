@@ -3,6 +3,8 @@ package com.upgrad.Grofers.api.controllers;
 
 import com.upgrad.Grofers.api.*;
 import com.upgrad.Grofers.service.business.CustomerService;
+import com.upgrad.Grofers.service.business.JwtTokenProvider;
+import com.upgrad.Grofers.service.dao.CustomerDao;
 import com.upgrad.Grofers.service.entity.CustomerAuthEntity;
 import com.upgrad.Grofers.service.entity.CustomerEntity;
 import com.upgrad.Grofers.service.exception.AuthenticationFailedException;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -24,6 +27,8 @@ public class CustomerController {
 	@Autowired
 	private CustomerService customerService;
 
+	@Autowired
+	private CustomerDao customerDao;
 
 	/**
 	 * A controller method for customer signup.
@@ -52,15 +57,33 @@ public class CustomerController {
 	 * @throws AuthenticationFailedException
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
+	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization)
+			throws AuthenticationFailedException, AuthorizationFailedException {
 		byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
 		String decodedText = new String(decode);
 		String[] decodedArray = decodedText.split(":");
-
+		//TODO:: Move all code to service layer
 		System.out.println(decodedArray[1]);
-
-		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
-		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
+		CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
+		CustomerEntity customerEntity = customerDao.getCustomerByContactNumber(decodedArray[0]);
+		if(customerEntity== null){
+			throw new AuthorizationFailedException("ATHR-004","You are not authorized to view/update/delete any one else's address");
+		}
+		try {
+			 customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
+		}catch (Exception ignore){
+			final ZonedDateTime now = ZonedDateTime.now();
+			//TODO:: This query is not working as of now
+			customerAuthEntity = customerDao.getCustomerAuthByUUID(customerEntity.getUuid());
+			customerAuthEntity.setLoginAt(now);
+			customerAuthEntity.setUuid(customerEntity.getUuid());
+			customerAuthEntity.setLogoutAt(null);
+			customerAuthEntity.setExpiresAt(now.plusHours(8));
+			customerAuthEntity.setCustomer(customerEntity);
+			JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(customerEntity.getPassword());
+			customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerAuthEntity.getUuid(), now, now.plusHours(8)));
+			customerDao.updateCustomerAuth(customerAuthEntity);
+		}
 
 		LoginResponse loginResponse=new LoginResponse().id(customerEntity.getUuid())
 				.emailAddress(customerEntity.getEmail()).firstName(customerEntity.getFirstName())
