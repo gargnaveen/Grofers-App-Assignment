@@ -53,19 +53,7 @@ public class CustomerController {
 	 */
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
-		byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-		String decodedText = new String(decode);
-		String[] decodedArray = decodedText.split(":");
 
-		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
-		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
-
-		LoginResponse loginResponse=new LoginResponse().id(customerEntity.getUuid())
-				.emailAddress(customerEntity.getEmail()).firstName(customerEntity.getFirstName())
-				.lastName(customerEntity.getLastName()).contactNumber(customerEntity.getContactNumber()).message("LOGGED IN SUCCESSFULLY");
-		HttpHeaders header = new HttpHeaders();
-		header.add("access-token", customerAuthEntity.getAccessToken());
-		return new ResponseEntity<LoginResponse>(loginResponse, header, HttpStatus.OK);
 	}
 
 	/**
