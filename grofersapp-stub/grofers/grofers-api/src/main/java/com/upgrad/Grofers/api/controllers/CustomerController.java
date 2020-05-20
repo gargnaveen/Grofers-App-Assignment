@@ -3,6 +3,7 @@ package com.upgrad.Grofers.api.controllers;
 
 import com.upgrad.Grofers.api.*;
 import com.upgrad.Grofers.service.business.CustomerService;
+import com.upgrad.Grofers.service.dao.CustomerDao;
 import com.upgrad.Grofers.service.entity.CustomerAuthEntity;
 import com.upgrad.Grofers.service.entity.CustomerEntity;
 import com.upgrad.Grofers.service.exception.AuthenticationFailedException;
@@ -24,6 +25,8 @@ public class CustomerController {
 	@Autowired
 	private CustomerService customerService;
 
+	@Autowired
+	private CustomerDao customerDao;
 
 	/**
 	 * A controller method for customer signup.
@@ -52,10 +55,13 @@ public class CustomerController {
 	 * @throws AuthenticationFailedException
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
+	public ResponseEntity<LoginResponse> customerLogin(@RequestHeader("authorization") final String authorization)
+			throws AuthenticationFailedException, AuthorizationFailedException {
 		byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
 		String decodedText = new String(decode);
 		String[] decodedArray = decodedText.split(":");
+		//TODO:: Move all code to service layer
+		System.out.println(decodedArray[1]);
 
 		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();

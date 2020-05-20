@@ -16,5 +16,6 @@ public interface CustomerDao {
     CustomerAuthEntity getCustomerAuthByAccesstoken(String accesstoken);
     CustomerAuthEntity updateCustomerAuth(CustomerAuthEntity customerAuthEntity);
     CustomerEntity updateCustomer(CustomerEntity customerEntity);
+    CustomerAuthEntity getCustomerAuthByUUID(String uuid);
 
 }

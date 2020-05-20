@@ -67,4 +67,13 @@ public class CustomerDaoImpl implements CustomerDao {
         return entityManager.merge(customerEntity);
     }
 
+    public CustomerAuthEntity getCustomerAuthByUUID(String uuid){
+        try {
+            return entityManager.createNamedQuery("customerByuuid", CustomerAuthEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+
 }
