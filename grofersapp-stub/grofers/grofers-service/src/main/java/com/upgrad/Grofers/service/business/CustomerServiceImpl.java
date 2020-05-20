@@ -86,10 +86,9 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByUUID(customerEntity.getUuid());
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
-            if(customerEntity == null) {
+            if(customerAuthEntity == null) {
                 customerAuthEntity = new CustomerAuthEntity();
                 customerAuthEntity.setUuid(customerEntity.getUuid());
-                customerAuthEntity.setCustomer(customerEntity);
                 customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerAuthEntity.getUuid(), now, expiresAt));
                 customerAuthEntity.setLoginAt(now);
                 customerAuthEntity.setExpiresAt(expiresAt);

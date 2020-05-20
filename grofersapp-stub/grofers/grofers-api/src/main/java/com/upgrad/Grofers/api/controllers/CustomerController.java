@@ -60,8 +60,6 @@ public class CustomerController {
 		byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
 		String decodedText = new String(decode);
 		String[] decodedArray = decodedText.split(":");
-		//TODO:: Move all code to service layer
-		System.out.println(decodedArray[1]);
 
 		CustomerAuthEntity customerAuthEntity = customerService.authenticate(decodedArray[0], decodedArray[1]);
 		CustomerEntity customerEntity = customerAuthEntity.getCustomer();
